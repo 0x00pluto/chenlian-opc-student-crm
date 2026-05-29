@@ -3,12 +3,18 @@
 import { useEffect, useState } from "react";
 
 import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
+import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 
 export default function AuditLogsPage() {
@@ -23,32 +29,34 @@ export default function AuditLogsPage() {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-zinc-900">审计日志</h2>
-      <div className="rounded-md border border-zinc-200 bg-white">
+      <DataTableShell>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>时间</TableHead>
-              <TableHead>操作</TableHead>
-              <TableHead>操作人</TableHead>
-              <TableHead>详情</TableHead>
-            </TableRow>
+            <DataTableHeaderRow>
+              <DataTableHead>时间</DataTableHead>
+              <DataTableHead>操作</DataTableHead>
+              <DataTableHead>操作人</DataTableHead>
+              <DataTableHead>详情</DataTableHead>
+            </DataTableHeaderRow>
           </TableHeader>
           <TableBody>
             {items.map((log) => (
-              <TableRow key={log.id as string}>
-                <TableCell className="py-2 text-zinc-500">
+              <DataTableBodyRow key={log.id as string}>
+                <TableCell className={tableCellSecondary}>
                   {(log.createdAt as string)?.slice(0, 19)}
                 </TableCell>
-                <TableCell className="py-2">{log.action as string}</TableCell>
-                <TableCell className="py-2">{log.operatorName as string}</TableCell>
-                <TableCell className="max-w-md truncate py-2 text-xs text-zinc-500">
+                <TableCell className={tableCellPrimary}>{log.action as string}</TableCell>
+                <TableCell className={tableCellSecondary}>
+                  {log.operatorName as string}
+                </TableCell>
+                <TableCell className="max-w-md truncate px-4 py-2 text-sm text-zinc-500">
                   {JSON.stringify(log.payload)}
                 </TableCell>
-              </TableRow>
+              </DataTableBodyRow>
             ))}
           </TableBody>
         </Table>
-      </div>
+      </DataTableShell>
     </div>
   );
 }

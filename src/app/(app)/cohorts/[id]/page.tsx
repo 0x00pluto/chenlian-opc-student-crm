@@ -5,6 +5,16 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import { EnrollmentStatusBadge } from "@/components/shared/status-badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,9 +31,7 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -150,70 +158,69 @@ export default function CohortDetailPage() {
         </TabsList>
 
         <TabsContent value="students">
-          <div className="rounded-md border border-zinc-200 bg-white">
+          <DataTableShell>
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>学员</TableHead>
-                  <TableHead>手机号</TableHead>
-                  <TableHead>学籍状态</TableHead>
-                  <TableHead />
-                </TableRow>
+                <DataTableHeaderRow>
+                  <DataTableHead>学员</DataTableHead>
+                  <DataTableHead>手机号</DataTableHead>
+                  <DataTableHead>学籍状态</DataTableHead>
+                  <DataTableHead className="w-[88px]" />
+                </DataTableHeaderRow>
               </TableHeader>
               <TableBody>
                 {enrollments.map((row) => {
                   const e = row.enrollment as Record<string, unknown>;
                   return (
-                    <TableRow key={e.id as string}>
-                      <TableCell className="py-2">{row.studentName as string}</TableCell>
-                      <TableCell className="py-2 text-zinc-500">
+                    <DataTableBodyRow key={e.id as string}>
+                      <TableCell className={tableCellPrimary}>
+                        {row.studentName as string}
+                      </TableCell>
+                      <TableCell className={tableCellSecondary}>
                         {row.studentPhone as string}
                       </TableCell>
-                      <TableCell className="py-2">
+                      <TableCell className="px-4 py-2">
                         <EnrollmentStatusBadge status={e.status as string} />
                       </TableCell>
-                      <TableCell className="py-2 text-right">
-                        <Link
-                          href={`/students/${e.studentId}`}
-                          className="text-sm text-blue-600 hover:underline"
-                        >
-                          学员详情
-                        </Link>
+                      <TableCell className={tableCellActions}>
+                        <TableRowActionButton asChild>
+                          <Link href={`/students/${e.studentId}`}>学员详情</Link>
+                        </TableRowActionButton>
                       </TableCell>
-                    </TableRow>
+                    </DataTableBodyRow>
                   );
                 })}
               </TableBody>
             </Table>
-          </div>
+          </DataTableShell>
         </TabsContent>
 
         <TabsContent value="attendance">
-          <div className="rounded-md border border-zinc-200 bg-white">
+          <DataTableShell>
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>学员</TableHead>
-                  <TableHead>学籍</TableHead>
-                  <TableHead>最近签到</TableHead>
-                  <TableHead />
-                </TableRow>
+                <DataTableHeaderRow>
+                  <DataTableHead>学员</DataTableHead>
+                  <DataTableHead>学籍</DataTableHead>
+                  <DataTableHead>最近签到</DataTableHead>
+                  <DataTableHead className="w-[72px]" />
+                </DataTableHeaderRow>
               </TableHeader>
               <TableBody>
                 {attendance.map((row) => (
-                  <TableRow key={row.enrollmentId as string}>
-                    <TableCell className="py-2">{row.studentName as string}</TableCell>
-                    <TableCell className="py-2">
+                  <DataTableBodyRow key={row.enrollmentId as string}>
+                    <TableCell className={tableCellPrimary}>
+                      {row.studentName as string}
+                    </TableCell>
+                    <TableCell className="px-4 py-2">
                       <EnrollmentStatusBadge status={row.enrollmentStatus as string} />
                     </TableCell>
-                    <TableCell className="py-2 text-zinc-500">
+                    <TableCell className={tableCellSecondary}>
                       {(row.lastSessionDate as string)?.slice(0, 10) ?? "—"}
                     </TableCell>
-                    <TableCell className="py-2 text-right">
+                    <TableCell className={tableCellActions}>
                       {row.enrollmentStatus === "in_progress" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
+                        <TableRowActionButton
                           onClick={() =>
                             setAttendanceOpen({
                               enrollmentId: row.enrollmentId as string,
@@ -222,14 +229,14 @@ export default function CohortDetailPage() {
                           }
                         >
                           签到
-                        </Button>
+                        </TableRowActionButton>
                       )}
                     </TableCell>
-                  </TableRow>
+                  </DataTableBodyRow>
                 ))}
               </TableBody>
             </Table>
-          </div>
+          </DataTableShell>
         </TabsContent>
       </Tabs>
 

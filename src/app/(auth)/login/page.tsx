@@ -12,8 +12,8 @@ import { Label } from "@/components/ui/label";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("zhang@chenlian.com");
-  const [password, setPassword] = useState("123456");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
@@ -75,9 +75,6 @@ function LoginForm() {
               {loading ? "登录中…" : "登录"}
             </Button>
           </form>
-          <p className="mt-4 text-xs text-zinc-500">
-            演示账号：zhang@chenlian.com / 123456（需先执行 pnpm db:seed）
-          </p>
         </CardContent>
       </Card>
     </div>

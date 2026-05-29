@@ -3,15 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import { CohortStatusBadge } from "@/components/shared/status-badge";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 
 export default function CohortsPage() {
@@ -26,39 +33,45 @@ export default function CohortsPage() {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-zinc-900">期班列表</h2>
-      <div className="rounded-md border border-zinc-200 bg-white">
+      <DataTableShell>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>期班</TableHead>
-              <TableHead>系列</TableHead>
-              <TableHead>分类</TableHead>
-              <TableHead>状态</TableHead>
-              <TableHead />
-            </TableRow>
+            <DataTableHeaderRow>
+              <DataTableHead>期班</DataTableHead>
+              <DataTableHead>系列</DataTableHead>
+              <DataTableHead>分类</DataTableHead>
+              <DataTableHead>状态</DataTableHead>
+              <DataTableHead className="w-[72px]" />
+            </DataTableHeaderRow>
           </TableHeader>
           <TableBody>
             {items.map((row) => {
               const c = row.cohort as Record<string, unknown>;
               return (
-                <TableRow key={c.id as string}>
-                  <TableCell className="py-2 font-medium">{c.name as string}</TableCell>
-                  <TableCell className="py-2 text-zinc-500">{row.seriesName as string}</TableCell>
-                  <TableCell className="py-2 text-zinc-500">{row.categoryName as string}</TableCell>
-                  <TableCell className="py-2">
+                <DataTableBodyRow key={c.id as string}>
+                  <TableCell className={tableCellPrimary}>
+                    {c.name as string}
+                  </TableCell>
+                  <TableCell className={tableCellSecondary}>
+                    {row.seriesName as string}
+                  </TableCell>
+                  <TableCell className={tableCellSecondary}>
+                    {row.categoryName as string}
+                  </TableCell>
+                  <TableCell className="px-4 py-2">
                     <CohortStatusBadge status={c.status as string} />
                   </TableCell>
-                  <TableCell className="py-2 text-right">
-                    <Button variant="ghost" size="sm" asChild>
+                  <TableCell className={tableCellActions}>
+                    <TableRowActionButton asChild>
                       <Link href={`/cohorts/${c.id}`}>详情</Link>
-                    </Button>
+                    </TableRowActionButton>
                   </TableCell>
-                </TableRow>
+                </DataTableBodyRow>
               );
             })}
           </TableBody>
         </Table>
-      </div>
+      </DataTableShell>
     </div>
   );
 }

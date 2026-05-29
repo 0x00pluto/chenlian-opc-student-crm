@@ -3,12 +3,22 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellEmpty,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
+import { CohortStatusBadge } from "@/components/shared/status-badge";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -31,41 +41,43 @@ export default function AttendanceListPage() {
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-zinc-900">考勤管理</h2>
       <p className="text-sm text-zinc-500">选择期班进入考勤录入与查看</p>
-      <div className="rounded-md border border-zinc-200 bg-white">
+      <DataTableShell>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>期班</TableHead>
-              <TableHead>系列</TableHead>
-              <TableHead>状态</TableHead>
-              <TableHead />
-            </TableRow>
+            <DataTableHeaderRow>
+              <DataTableHead>期班</DataTableHead>
+              <DataTableHead>系列</DataTableHead>
+              <DataTableHead>状态</DataTableHead>
+              <DataTableHead className="w-[88px]" />
+            </DataTableHeaderRow>
           </TableHeader>
           <TableBody>
             {cohorts.map((row) => (
-              <TableRow key={row.cohort.id}>
-                <TableCell className="py-2 font-medium">{row.cohort.name}</TableCell>
-                <TableCell className="py-2 text-zinc-500">
-                  {(row as { seriesName?: string }).seriesName ?? "—"}
+              <DataTableBodyRow key={row.cohort.id}>
+                <TableCell className={tableCellPrimary}>{row.cohort.name}</TableCell>
+                <TableCell className={tableCellSecondary}>
+                  {row.seriesName ?? "—"}
                 </TableCell>
-                <TableCell className="py-2 text-zinc-500">{row.cohort.status}</TableCell>
-                <TableCell className="py-2 text-right">
-                  <Button variant="ghost" size="sm" asChild>
+                <TableCell className="px-4 py-2">
+                  <CohortStatusBadge status={row.cohort.status} />
+                </TableCell>
+                <TableCell className={tableCellActions}>
+                  <TableRowActionButton asChild>
                     <Link href={`/cohorts/${row.cohort.id}`}>考勤入口</Link>
-                  </Button>
+                  </TableRowActionButton>
                 </TableCell>
-              </TableRow>
+              </DataTableBodyRow>
             ))}
             {!cohorts.length && (
               <TableRow>
-                <TableCell colSpan={4} className="py-4 text-center text-sm text-zinc-500">
+                <TableCell colSpan={4} className={tableCellEmpty}>
                   暂无期班
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>
+      </DataTableShell>
     </div>
   );
 }

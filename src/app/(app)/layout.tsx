@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { redirect } from "next/navigation";
 
 import { AppHeaderNav } from "@/components/layout/app-header-nav";
@@ -17,11 +18,17 @@ export default async function AppLayout({
   if (!user) redirect("/login");
 
   return (
-    <SidebarProvider>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "17.5rem",
+        } as CSSProperties
+      }
+    >
       <AppSidebar role={user.role} />
-      <SidebarInset className="bg-zinc-50">
+      <SidebarInset>
         <AppHeaderNav userName={user.name} />
-        <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
+        <main className="flex-1 overflow-auto bg-zinc-50 p-4 md:p-5">{children}</main>
       </SidebarInset>
       <Toaster richColors position="top-right" />
     </SidebarProvider>

@@ -2,10 +2,7 @@ import { runSeed } from "../src/lib/seed";
 
 runSeed()
   .then((result) => {
-    console.log("Seed completed.");
-    for (const a of result.accounts) {
-      console.log(`  ${a.email} - ${a.role}`);
-    }
+    console.log("Seed completed.", result.stats);
   })
   .catch((e) => {
     console.error(e);

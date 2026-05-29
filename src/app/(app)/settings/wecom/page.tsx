@@ -36,7 +36,7 @@ export default function WecomSettingsPage() {
     <div className="max-w-md space-y-6">
       <h2 className="text-lg font-medium text-zinc-900">企微配置</h2>
       <p className="text-sm text-zinc-500">
-        V1.0 默认使用 Mock 企微客户联系。填写 CorpId / AgentId 供后续真实对接预留。
+        配置企业微信客户联系参数。未接入真实环境前，可启用离线联调。
       </p>
       <div className="space-y-4">
         <div className="space-y-2">
@@ -53,7 +53,7 @@ export default function WecomSettingsPage() {
             checked={mockEnabled}
             onChange={(e) => setMockEnabled(e.target.checked)}
           />
-          启用 Mock 模式
+          启用离线联调
         </label>
         <Button size="sm" className="bg-blue-600 hover:bg-blue-700" onClick={save}>
           保存配置

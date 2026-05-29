@@ -5,6 +5,13 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  tableCellPrimary,
+} from "@/components/shared/data-table";
+import {
   AlumniStatusBadge,
   EnrollmentStatusBadge,
 } from "@/components/shared/status-badge";
@@ -34,7 +41,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -442,31 +448,34 @@ export default function StudentDetailPage() {
         </TabsContent>
 
         <TabsContent value="enrollments" className="space-y-4">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>期班</TableHead>
-                <TableHead>状态</TableHead>
-                <TableHead>校友</TableHead>
-                <TableHead>操作</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {enrollments.map((row) => {
-                const e = row.enrollment as Record<string, unknown>;
-                const cohort = row.cohort as Record<string, unknown>;
-                const att = attendanceMap[e.id as string] ?? [];
-                return (
-                  <Fragment key={e.id as string}>
-                    <TableRow>
-                      <TableCell className="py-2">{e.cohortSnapshotName as string}</TableCell>
-                      <TableCell className="py-2">
-                        <EnrollmentStatusBadge status={e.status as string} />
-                      </TableCell>
-                      <TableCell className="py-2">
-                        <AlumniStatusBadge status={e.alumniStatus as string} />
-                      </TableCell>
-                      <TableCell className="py-2">
+          <DataTableShell>
+            <Table>
+              <TableHeader>
+                <DataTableHeaderRow>
+                  <DataTableHead>期班</DataTableHead>
+                  <DataTableHead>状态</DataTableHead>
+                  <DataTableHead>校友</DataTableHead>
+                  <DataTableHead>操作</DataTableHead>
+                </DataTableHeaderRow>
+              </TableHeader>
+              <TableBody>
+                {enrollments.map((row) => {
+                  const e = row.enrollment as Record<string, unknown>;
+                  const cohort = row.cohort as Record<string, unknown>;
+                  const att = attendanceMap[e.id as string] ?? [];
+                  return (
+                    <Fragment key={e.id as string}>
+                      <DataTableBodyRow>
+                        <TableCell className={tableCellPrimary}>
+                          {e.cohortSnapshotName as string}
+                        </TableCell>
+                        <TableCell className="px-4 py-2">
+                          <EnrollmentStatusBadge status={e.status as string} />
+                        </TableCell>
+                        <TableCell className="px-4 py-2">
+                          <AlumniStatusBadge status={e.alumniStatus as string} />
+                        </TableCell>
+                        <TableCell className="px-4 py-2">
                         <div className="flex flex-wrap gap-1">
                           {e.status === "pending_interview" &&
                             Boolean(cohort.requiresInterview) && (
@@ -554,26 +563,30 @@ export default function StudentDetailPage() {
                             </Button>
                           )}
                         </div>
-                      </TableCell>
-                    </TableRow>
-                    {att.length > 0 && (
-                      <TableRow key={`${e.id}-att`}>
-                        <TableCell colSpan={4} className="bg-zinc-50 py-2 text-xs text-zinc-600">
-                          考勤：
-                          {att.map((a) => (
-                            <span key={a.id as string} className="mr-3">
-                              {(a.sessionDate as string)?.slice(0, 10)}
-                              {a.sessionLabel ? ` (${a.sessionLabel as string})` : ""}
-                            </span>
-                          ))}
                         </TableCell>
-                      </TableRow>
-                    )}
-                  </Fragment>
-                );
-              })}
-            </TableBody>
-          </Table>
+                      </DataTableBodyRow>
+                      {att.length > 0 && (
+                        <TableRow key={`${e.id}-att`}>
+                          <TableCell
+                            colSpan={4}
+                            className="bg-zinc-50 px-4 py-2 text-xs text-zinc-600"
+                          >
+                            考勤：
+                            {att.map((a) => (
+                              <span key={a.id as string} className="mr-3">
+                                {(a.sessionDate as string)?.slice(0, 10)}
+                                {a.sessionLabel ? ` (${a.sessionLabel as string})` : ""}
+                              </span>
+                            ))}
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Fragment>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </DataTableShell>
         </TabsContent>
 
         <TabsContent value="interview" className="space-y-4">

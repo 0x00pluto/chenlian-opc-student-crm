@@ -9,20 +9,11 @@ pnpm install
 # 若 better-sqlite3 未编译，在项目根目录执行：
 # cd node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3 && npm run build-release
 
-pnpm db:seed    # 初始化 data/opc.db 与演示数据
+pnpm db:seed    # 初始化 data/opc.db
 pnpm dev
 ```
 
-浏览器打开 [http://localhost:3000](http://localhost:3000)，使用演示账号登录：
-
-| 邮箱 | 角色 | 密码 |
-|------|------|------|
-| super@chenlian.com | 超级管理员 | 123456 |
-| admin@chenlian.com | 业务管理员 | 123456 |
-| zhang@chenlian.com | 班主任 | 123456 |
-| li@chenlian.com | 班主任 | 123456 |
-
-开发环境也可 `POST /api/dev/seed` 重新写入种子数据。
+浏览器打开 [http://localhost:3000](http://localhost:3000) 登录。首次部署需先执行 `pnpm db:seed` 并完成用户初始化。
 
 ## 功能范围
 
@@ -37,5 +28,5 @@ pnpm dev
 |------|------|
 | `pnpm dev` | 开发服务器 |
 | `pnpm build` | 生产构建 |
-| `pnpm db:seed` | 种子数据 |
+| `pnpm db:seed` | 初始化数据库 |
 | `pnpm db:generate` | Drizzle 生成迁移 SQL |

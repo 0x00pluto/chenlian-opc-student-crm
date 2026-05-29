@@ -4,6 +4,16 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  TableRowActionButton,
+  tableCellEmpty,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -17,7 +27,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -118,46 +127,49 @@ export default function AdvisorTransferPage() {
         </Select>
       </div>
 
-      <div className="rounded-md border border-zinc-200 bg-white">
-        <div className="flex items-center justify-between border-b border-zinc-200 px-3 py-2">
-          <span className="text-sm text-zinc-600">
-            名下学员 {students.length} 人 · 已选 {selected.size} 人
-          </span>
-          <Button variant="ghost" size="sm" onClick={toggleAll}>
-            {allSelected ? "取消全选" : "全选"}
-          </Button>
-        </div>
+      <DataTableShell
+        toolbar={
+          <>
+            <span className="text-sm text-zinc-600">
+              名下学员 {students.length} 人 · 已选 {selected.size} 人
+            </span>
+            <TableRowActionButton onClick={toggleAll}>
+              {allSelected ? "取消全选" : "全选"}
+            </TableRowActionButton>
+          </>
+        }
+      >
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="w-10" />
-              <TableHead>姓名</TableHead>
-              <TableHead>手机号</TableHead>
-            </TableRow>
+            <DataTableHeaderRow>
+              <DataTableHead className="w-10" />
+              <DataTableHead>姓名</DataTableHead>
+              <DataTableHead>手机号</DataTableHead>
+            </DataTableHeaderRow>
           </TableHeader>
           <TableBody>
             {students.map((s) => (
-              <TableRow key={s.id}>
-                <TableCell className="py-2">
+              <DataTableBodyRow key={s.id}>
+                <TableCell className="px-4 py-2">
                   <Checkbox
                     checked={selected.has(s.id)}
                     onCheckedChange={() => toggleOne(s.id)}
                   />
                 </TableCell>
-                <TableCell className="py-2 font-medium">{s.name}</TableCell>
-                <TableCell className="py-2 text-zinc-500">{s.phone}</TableCell>
-              </TableRow>
+                <TableCell className={tableCellPrimary}>{s.name}</TableCell>
+                <TableCell className={tableCellSecondary}>{s.phone}</TableCell>
+              </DataTableBodyRow>
             ))}
             {!students.length && (
               <TableRow>
-                <TableCell colSpan={3} className="py-4 text-center text-sm text-zinc-500">
+                <TableCell colSpan={3} className={tableCellEmpty}>
                   该班主任名下暂无学员
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-      </div>
+      </DataTableShell>
 
       <div className="flex gap-2">
         <Button className="bg-blue-600 hover:bg-blue-700" size="sm" onClick={transfer}>

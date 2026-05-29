@@ -3,6 +3,16 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,9 +34,7 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 
 type UserRow = {
@@ -143,39 +151,39 @@ export default function UsersPage() {
           新建用户
         </Button>
       </div>
-      <div className="rounded-md border border-zinc-200 bg-white">
+      <DataTableShell>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>邮箱</TableHead>
-              <TableHead>姓名</TableHead>
-              <TableHead>角色</TableHead>
-              <TableHead>班主任</TableHead>
-              <TableHead>状态</TableHead>
-              <TableHead />
-            </TableRow>
+            <DataTableHeaderRow>
+              <DataTableHead>邮箱</DataTableHead>
+              <DataTableHead>姓名</DataTableHead>
+              <DataTableHead>角色</DataTableHead>
+              <DataTableHead>班主任</DataTableHead>
+              <DataTableHead>状态</DataTableHead>
+              <DataTableHead className="w-[140px]" />
+            </DataTableHeaderRow>
           </TableHeader>
           <TableBody>
             {items.map((u) => (
-              <TableRow key={u.id}>
-                <TableCell className="py-2">{u.email}</TableCell>
-                <TableCell className="py-2 font-medium">{u.name}</TableCell>
-                <TableCell className="py-2 text-zinc-500">{u.role}</TableCell>
-                <TableCell className="py-2 text-zinc-500">{u.advisorName ?? "—"}</TableCell>
-                <TableCell className="py-2 text-zinc-500">{u.status}</TableCell>
-                <TableCell className="py-2 text-right">
-                  <Button variant="ghost" size="sm" onClick={() => openEdit(u)}>
+              <DataTableBodyRow key={u.id}>
+                <TableCell className={tableCellSecondary}>{u.email}</TableCell>
+                <TableCell className={tableCellPrimary}>{u.name}</TableCell>
+                <TableCell className={tableCellSecondary}>{u.role}</TableCell>
+                <TableCell className={tableCellSecondary}>{u.advisorName ?? "—"}</TableCell>
+                <TableCell className={tableCellSecondary}>{u.status}</TableCell>
+                <TableCell className={tableCellActions}>
+                  <TableRowActionButton onClick={() => openEdit(u)}>
                     编辑
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => resetPassword(u.id)}>
+                  </TableRowActionButton>
+                  <TableRowActionButton onClick={() => resetPassword(u.id)}>
                     重置密码
-                  </Button>
+                  </TableRowActionButton>
                 </TableCell>
-              </TableRow>
+              </DataTableBodyRow>
             ))}
           </TableBody>
         </Table>
-      </div>
+      </DataTableShell>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-md">

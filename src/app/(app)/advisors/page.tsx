@@ -4,14 +4,21 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 
 export default function AdvisorsPage() {
@@ -41,45 +48,43 @@ export default function AdvisorsPage() {
   return (
     <div className="space-y-4">
       <h2 className="text-lg font-medium text-zinc-900">班主任管理</h2>
-      <div className="rounded-md border border-zinc-200 bg-white">
+      <DataTableShell>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>姓名</TableHead>
-              <TableHead>企微 ID</TableHead>
-              <TableHead>状态</TableHead>
-              <TableHead>学员数</TableHead>
-              <TableHead />
-            </TableRow>
+            <DataTableHeaderRow>
+              <DataTableHead>姓名</DataTableHead>
+              <DataTableHead>企微 ID</DataTableHead>
+              <DataTableHead>状态</DataTableHead>
+              <DataTableHead>学员数</DataTableHead>
+              <DataTableHead className="w-[140px]" />
+            </DataTableHeaderRow>
           </TableHeader>
           <TableBody>
             {items.map((a) => (
-              <TableRow key={a.id as string}>
-                <TableCell className="py-2 font-medium">{a.name as string}</TableCell>
-                <TableCell className="py-2 text-zinc-500">
+              <DataTableBodyRow key={a.id as string}>
+                <TableCell className={tableCellPrimary}>{a.name as string}</TableCell>
+                <TableCell className={tableCellSecondary}>
                   {(a.wecomUserid as string) ?? "—"}
                 </TableCell>
-                <TableCell className="py-2 text-zinc-500">{a.status as string}</TableCell>
-                <TableCell className="py-2">{a.studentCount as number}</TableCell>
-                <TableCell className="py-2 text-right">
-                  <Button variant="ghost" size="sm" asChild>
+                <TableCell className={tableCellSecondary}>{a.status as string}</TableCell>
+                <TableCell className={tableCellSecondary}>
+                  {a.studentCount as number}
+                </TableCell>
+                <TableCell className={tableCellActions}>
+                  <TableRowActionButton asChild>
                     <Link href={`/advisors/${a.id}/transfer`}>离职转移</Link>
-                  </Button>
+                  </TableRowActionButton>
                   {a.status === "active" && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deactivate(a.id as string)}
-                    >
+                    <TableRowActionButton onClick={() => deactivate(a.id as string)}>
                       停用
-                    </Button>
+                    </TableRowActionButton>
                   )}
                 </TableCell>
-              </TableRow>
+              </DataTableBodyRow>
             ))}
           </TableBody>
         </Table>
-      </div>
+      </DataTableShell>
     </div>
   );
 }

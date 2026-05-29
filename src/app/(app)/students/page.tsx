@@ -4,6 +4,16 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  DataTableShell,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,9 +36,7 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 import { formatDate } from "@/lib/format";
 import { parseTags } from "@/lib/tags";
@@ -155,35 +163,25 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      <div className="rounded-md border border-zinc-200 bg-white">
+      <DataTableShell>
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="text-xs uppercase tracking-wider text-zinc-500">
-                姓名
-              </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider text-zinc-500">
-                手机号
-              </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider text-zinc-500">
-                班主任
-              </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider text-zinc-500">
-                标签
-              </TableHead>
-              <TableHead className="text-xs uppercase tracking-wider text-zinc-500">
-                最后跟进
-              </TableHead>
-              <TableHead />
-            </TableRow>
+            <DataTableHeaderRow>
+              <DataTableHead>姓名</DataTableHead>
+              <DataTableHead>手机号</DataTableHead>
+              <DataTableHead>班主任</DataTableHead>
+              <DataTableHead>标签</DataTableHead>
+              <DataTableHead>最后跟进</DataTableHead>
+              <DataTableHead className="w-[72px]" />
+            </DataTableHeaderRow>
           </TableHeader>
           <TableBody>
             {items.map((s) => (
-              <TableRow key={s.id}>
-                <TableCell className="py-2 font-medium">{s.name}</TableCell>
-                <TableCell className="py-2 text-zinc-500">{s.phone}</TableCell>
-                <TableCell className="py-2 text-zinc-500">{s.advisorName}</TableCell>
-                <TableCell className="py-2">
+              <DataTableBodyRow key={s.id}>
+                <TableCell className={tableCellPrimary}>{s.name}</TableCell>
+                <TableCell className={tableCellSecondary}>{s.phone}</TableCell>
+                <TableCell className={tableCellSecondary}>{s.advisorName}</TableCell>
+                <TableCell className="px-4 py-2">
                   <div className="flex flex-wrap gap-1">
                     {parseTags(s.tags).map((t) => (
                       <Badge key={t} variant="outline" className="text-xs">
@@ -192,19 +190,19 @@ export default function StudentsPage() {
                     ))}
                   </div>
                 </TableCell>
-                <TableCell className="py-2 text-sm text-zinc-500">
+                <TableCell className={tableCellSecondary}>
                   {formatDate(s.lastFollowUpAt)}
                 </TableCell>
-                <TableCell className="py-2 text-right">
-                  <Button variant="ghost" size="sm" asChild>
+                <TableCell className={tableCellActions}>
+                  <TableRowActionButton asChild>
                     <Link href={`/students/${s.id}`}>详情</Link>
-                  </Button>
+                  </TableRowActionButton>
                 </TableCell>
-              </TableRow>
+              </DataTableBodyRow>
             ))}
           </TableBody>
         </Table>
-      </div>
+      </DataTableShell>
     </div>
   );
 }

@@ -3,13 +3,22 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellEmpty,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
@@ -113,41 +122,41 @@ export default function StudentImportPage() {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>时间</TableHead>
-                <TableHead>操作人</TableHead>
-                <TableHead>新建</TableHead>
-                <TableHead>合并</TableHead>
-                <TableHead>待确认</TableHead>
-                <TableHead>跳过</TableHead>
-                <TableHead />
-              </TableRow>
+              <DataTableHeaderRow>
+                <DataTableHead>时间</DataTableHead>
+                <DataTableHead>操作人</DataTableHead>
+                <DataTableHead>新建</DataTableHead>
+                <DataTableHead>合并</DataTableHead>
+                <DataTableHead>待确认</DataTableHead>
+                <DataTableHead>跳过</DataTableHead>
+                <DataTableHead className="w-[88px]" />
+              </DataTableHeaderRow>
             </TableHeader>
             <TableBody>
               {batches.map((b) => (
-                <TableRow key={b.id}>
-                  <TableCell className="py-2 text-zinc-500">
+                <DataTableBodyRow key={b.id}>
+                  <TableCell className={tableCellSecondary}>
                     {formatDateTime(b.createdAt)}
                   </TableCell>
-                  <TableCell className="py-2">{b.operatorName}</TableCell>
-                  <TableCell className="py-2">{b.createdCount}</TableCell>
-                  <TableCell className="py-2">{b.mergedCount}</TableCell>
-                  <TableCell className="py-2">{b.pendingCount}</TableCell>
-                  <TableCell className="py-2">{b.skippedCount}</TableCell>
-                  <TableCell className="py-2 text-right">
+                  <TableCell className={tableCellPrimary}>{b.operatorName}</TableCell>
+                  <TableCell className={tableCellSecondary}>{b.createdCount}</TableCell>
+                  <TableCell className={tableCellSecondary}>{b.mergedCount}</TableCell>
+                  <TableCell className={tableCellSecondary}>{b.pendingCount}</TableCell>
+                  <TableCell className={tableCellSecondary}>{b.skippedCount}</TableCell>
+                  <TableCell className={tableCellActions}>
                     {b.skippedCount > 0 && (
-                      <Button variant="ghost" size="sm" asChild>
+                      <TableRowActionButton asChild>
                         <a href={`/api/students/import/batches/${b.id}/failures`} download>
                           失败 CSV
                         </a>
-                      </Button>
+                      </TableRowActionButton>
                     )}
                   </TableCell>
-                </TableRow>
+                </DataTableBodyRow>
               ))}
               {!batches.length && (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-4 text-center text-sm text-zinc-500">
+                  <TableCell colSpan={7} className={tableCellEmpty}>
                     暂无导入记录
                   </TableCell>
                 </TableRow>

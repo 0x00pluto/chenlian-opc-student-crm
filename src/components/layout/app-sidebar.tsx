@@ -22,11 +22,11 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +54,41 @@ const adminNav: NavItem[] = [
   { title: "企微配置", href: "/settings/wecom", icon: Settings, roles: ["super_admin"] },
 ];
 
+const navButtonClass = cn(
+  "h-10 gap-3 rounded-md px-3 text-sm",
+  "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900",
+  "data-[active=true]:bg-zinc-100 data-[active=true]:font-medium data-[active=true]:text-zinc-900",
+  "hover:data-[active=true]:bg-zinc-100",
+  "[&_svg]:size-[18px]",
+);
+
+function NavItems({
+  items,
+  pathname,
+}: {
+  items: NavItem[];
+  pathname: string;
+}) {
+  return (
+    <SidebarMenu className="gap-1">
+      {items.map((item) => (
+        <SidebarMenuItem key={item.href}>
+          <SidebarMenuButton
+            asChild
+            isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
+            className={navButtonClass}
+          >
+            <Link href={item.href}>
+              <item.icon />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
+}
+
 export function AppSidebar({ role }: { role: string }) {
   const pathname = usePathname();
 
@@ -63,76 +98,49 @@ export function AppSidebar({ role }: { role: string }) {
       return item.roles.includes(role);
     });
 
+  const adminItems = filterByRole(adminNav);
+
   async function handleLogout() {
     await fetch("/api/auth/login", { method: "DELETE" });
     window.location.href = "/login";
   }
 
   return (
-    <Sidebar className="border-r border-zinc-200">
-      <SidebarHeader className="border-b border-zinc-200 px-4 py-3">
-        <div className="flex flex-col gap-0.5">
+    <Sidebar className="border-r border-zinc-200 bg-zinc-50/50">
+      <SidebarHeader className="px-4 pb-2 pt-4">
+        <div className="flex flex-col gap-1">
           <span className="text-sm font-medium text-zinc-900">宸联教育</span>
-          <span className="text-xs text-zinc-500">OPC 学员孵化管理系统</span>
+          <span className="text-sm text-zinc-500">OPC 学员孵化管理系统</span>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-zinc-500">
-            工作台
-          </SidebarGroupLabel>
+      <SidebarContent className="gap-0 px-3 py-2">
+        <SidebarGroup className="p-0">
           <SidebarGroupContent>
-            <SidebarMenu>
-              {mainNav.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
-                  >
-                    <Link href={item.href} className="text-sm">
-                      <item.icon className="size-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            <NavItems items={mainNav} pathname={pathname} />
           </SidebarGroupContent>
         </SidebarGroup>
-        {filterByRole(adminNav).length > 0 && (
-          <SidebarGroup>
-            <SidebarGroupLabel className="text-xs uppercase tracking-wider text-zinc-500">
-              管理
-            </SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {filterByRole(adminNav).map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
-                    >
-                      <Link href={item.href} className="text-sm">
-                        <item.icon className="size-4" />
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+        {adminItems.length > 0 && (
+          <>
+            <SidebarSeparator className="my-3 bg-zinc-200/70" />
+            <SidebarGroup className="p-0">
+              <SidebarGroupContent>
+                <NavItems items={adminItems} pathname={pathname} />
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
         )}
       </SidebarContent>
-      <SidebarFooter className="border-t border-zinc-200 p-2">
+      <SidebarFooter className="border-t border-zinc-200/70 p-3">
         <button
           type="button"
           onClick={handleLogout}
           className={cn(
-            "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900",
+            "flex h-10 w-full items-center gap-3 rounded-md px-3 text-sm text-zinc-600",
+            "hover:bg-zinc-100 hover:text-zinc-900",
+            "[&_svg]:size-[18px]",
           )}
         >
-          <LogOut className="size-4" />
+          <LogOut />
           退出登录
         </button>
       </SidebarFooter>

@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { FolderX, Inbox } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
+import {
+  DataTableBodyRow,
+  DataTableHead,
+  DataTableHeaderRow,
+  TableRowActionButton,
+  tableCellActions,
+  tableCellPrimary,
+  tableCellSecondary,
+} from "@/components/shared/data-table";
 import { labelExportType } from "@/lib/labels";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,9 +28,7 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
-  TableRow,
 } from "@/components/ui/table";
 
 type MetricsResponse = {
@@ -38,6 +46,21 @@ type MetricsResponse = {
   }[];
 };
 
+function TableEmptyState({
+  message,
+  icon: Icon = Inbox,
+}: {
+  message: string;
+  icon?: React.ComponentType<{ className?: string }>;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center py-10">
+      <Icon className="h-10 w-10 text-muted-foreground/30" />
+      <p className="mt-2 text-sm text-muted-foreground">{message}</p>
+    </div>
+  );
+}
+
 function monthBounds() {
   const now = new Date();
   const start = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -47,6 +70,8 @@ function monthBounds() {
     to: end.toISOString().slice(0, 10),
   };
 }
+
+const cardCompactClass = "border border-border shadow-none ring-0";
 
 export default function DashboardPage() {
   const defaults = monthBounds();
@@ -88,13 +113,15 @@ export default function DashboardPage() {
   const periodLabel = data?.period
     ? `${data.period.from.slice(0, 10)} ~ ${data.period.to.slice(0, 10)}`
     : "";
+  const pendingFollowUp = data?.pendingFollowUp ?? [];
+  const alumniExpiring = data?.alumniExpiring ?? [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-medium text-zinc-900">数据仪表盘</h2>
-          <p className="text-sm text-zinc-500">
+          <h2 className="text-lg font-medium text-foreground">数据仪表盘</h2>
+          <p className="text-sm text-muted-foreground">
             {data?.scope === "team" ? "团队汇总" : "个人数据"}
             {periodLabel ? ` · ${periodLabel}` : ""}
             {data?.advisorName ? ` · ${data.advisorName}` : ""}
@@ -111,29 +138,29 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <Card className="border-zinc-200 shadow-sm">
-        <CardContent className="flex flex-wrap items-end gap-4 py-4">
+      <Card className={cardCompactClass}>
+        <CardContent className="flex flex-wrap items-end gap-4 p-4">
           <div className="space-y-1">
-            <Label className="text-xs text-zinc-500">开始日期</Label>
+            <Label className="text-xs text-muted-foreground">开始日期</Label>
             <input
               type="date"
               value={from}
               onChange={(e) => setFrom(e.target.value)}
-              className="rounded-md border border-zinc-200 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
           </div>
           <div className="space-y-1">
-            <Label className="text-xs text-zinc-500">结束日期</Label>
+            <Label className="text-xs text-muted-foreground">结束日期</Label>
             <input
               type="date"
               value={to}
               onChange={(e) => setTo(e.target.value)}
-              className="rounded-md border border-zinc-200 px-2 py-1 text-sm"
+              className="rounded-md border border-border px-2 py-1 text-sm"
             />
           </div>
           {isTeam && (
             <div className="space-y-1">
-              <Label className="text-xs text-zinc-500">班主任</Label>
+              <Label className="text-xs text-muted-foreground">班主任</Label>
               <Select
                 value={advisorId || "__all__"}
                 onValueChange={(v) => setAdvisorId(v === "__all__" ? "" : v)}
@@ -161,97 +188,85 @@ export default function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {metrics &&
           Object.entries(metrics).map(([key, m]) => (
-            <Card key={key} className="border-zinc-200 shadow-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-zinc-500">
-                  {m.label}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-2xl font-medium text-zinc-900">{m.value}%</p>
+            <Card key={key} className={`gap-0 py-0 ${cardCompactClass}`}>
+              <CardContent className="p-4">
+                <p className="text-sm font-medium text-muted-foreground">{m.label}</p>
+                <p className="mt-1 text-2xl font-bold tracking-tight text-foreground">
+                  {m.value}%
+                </p>
               </CardContent>
             </Card>
           ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="border-zinc-200 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-zinc-900">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card className={cardCompactClass}>
+          <CardHeader className="p-4 pb-2">
+            <CardTitle className="text-sm font-medium text-foreground">
               待跟进学员（30 天无跟进）
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-xs uppercase tracking-wider text-zinc-500">
-                    姓名
-                  </TableHead>
-                  <TableHead className="text-xs uppercase tracking-wider text-zinc-500">
-                    手机号
-                  </TableHead>
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(data?.pendingFollowUp ?? []).map((s) => (
-                  <TableRow key={s.id}>
-                    <TableCell className="py-2 font-medium">{s.name}</TableCell>
-                    <TableCell className="py-2 text-zinc-500">{s.phone}</TableCell>
-                    <TableCell className="py-2 text-right">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/students/${s.id}`}>跟进</Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {!data?.pendingFollowUp?.length && (
-                  <TableRow>
-                    <TableCell colSpan={3} className="py-4 text-center text-sm text-zinc-500">
-                      暂无待跟进
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+          <CardContent className="p-4 pt-0">
+            {pendingFollowUp.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <DataTableHeaderRow>
+                    <DataTableHead>姓名</DataTableHead>
+                    <DataTableHead>手机号</DataTableHead>
+                    <DataTableHead className="w-[72px]" />
+                  </DataTableHeaderRow>
+                </TableHeader>
+                <TableBody>
+                  {pendingFollowUp.map((s) => (
+                    <DataTableBodyRow key={s.id}>
+                      <TableCell className={tableCellPrimary}>{s.name}</TableCell>
+                      <TableCell className={tableCellSecondary}>{s.phone}</TableCell>
+                      <TableCell className={tableCellActions}>
+                        <TableRowActionButton asChild>
+                          <Link href={`/students/${s.id}`}>跟进</Link>
+                        </TableRowActionButton>
+                      </TableCell>
+                    </DataTableBodyRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <TableEmptyState message="暂无待跟进" icon={Inbox} />
+            )}
           </CardContent>
         </Card>
 
-        <Card className="border-zinc-200 shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-sm font-medium text-zinc-900">
+        <Card className={cardCompactClass}>
+          <CardHeader className="p-4 pb-2">
+            <CardTitle className="text-sm font-medium text-foreground">
               即将到期校友
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>学员</TableHead>
-                  <TableHead>期班</TableHead>
-                  <TableHead>到期日</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(data?.alumniExpiring ?? []).map((a) => (
-                  <TableRow key={a.enrollmentId}>
-                    <TableCell className="py-2">{a.studentName}</TableCell>
-                    <TableCell className="py-2 text-zinc-500">{a.cohortName}</TableCell>
-                    <TableCell className="py-2 text-zinc-500">
-                      {a.alumniExpiresAt?.slice(0, 10)}
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {!data?.alumniExpiring?.length && (
-                  <TableRow>
-                    <TableCell colSpan={3} className="py-4 text-center text-sm text-zinc-500">
-                      暂无即将到期
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+          <CardContent className="p-4 pt-0">
+            {alumniExpiring.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <DataTableHeaderRow>
+                    <DataTableHead>学员</DataTableHead>
+                    <DataTableHead>期班</DataTableHead>
+                    <DataTableHead>到期日</DataTableHead>
+                  </DataTableHeaderRow>
+                </TableHeader>
+                <TableBody>
+                  {alumniExpiring.map((a) => (
+                    <DataTableBodyRow key={a.enrollmentId}>
+                      <TableCell className={tableCellPrimary}>{a.studentName}</TableCell>
+                      <TableCell className={tableCellSecondary}>{a.cohortName}</TableCell>
+                      <TableCell className={tableCellSecondary}>
+                        {a.alumniExpiresAt?.slice(0, 10)}
+                      </TableCell>
+                    </DataTableBodyRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <TableEmptyState message="暂无即将到期" icon={FolderX} />
+            )}
           </CardContent>
         </Card>
       </div>
