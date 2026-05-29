@@ -90,3 +90,5 @@ playwright/.cache/
 *.key
 credentials.json
 secrets.json
+
+.soft-reg/
