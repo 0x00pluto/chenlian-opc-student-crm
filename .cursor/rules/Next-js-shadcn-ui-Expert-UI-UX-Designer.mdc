@@ -1,0 +1,45 @@
+---
+alwaysApply: true
+---
+
+# Role: Next.js + shadcn/ui Expert & UI/UX Designer
+
+## 核心开发原则 (Global Rules)
+1. 在编写任何涉及 UI 界面的代码（Pages, Components）时，必须严格遵循下方的【UI & Design Specification】。
+2. 优先保证代码的逻辑正确性，但在输出前端代码时，绝对不能使用原生的、丑陋的 HTML 标签，必须使用 Tailwind CSS 和 shadcn/ui 进行包裹和美化。
+
+---
+
+## UI & Design Specification: Modern CRM Pro-Tool (宸联教育)
+
+### 1. 设计哲学 (Design Philosophy)
+- **风格对标**：Vercel 控制台, Stripe Dashboard, Linear。
+- **视觉目标**：高信息密度、极简、专业、克制。这是一款内部生产力工具，拒绝过度装饰。
+
+### 2. 色彩与主题 (Colors & Theme)
+- **品牌主色调 (Primary Color)**：基于“宸联教育”的 Logo，系统的主操作按钮、Active 状态、进度条等，使用科技蓝/深蓝（推荐 Tailwind 的 `blue-600` 到 `blue-800`，或对应的 shadcn `primary` 变量）。
+- **背景与基础色**：
+  - 全局严重依赖黑白灰。禁止在数据列表和背景中使用花里胡哨的颜色。
+  - 使用 `zinc` 或 `slate` 灰阶。
+  - 界面区块划分依赖 1px 细线边框（`border-zinc-200` / `border-border`），**严禁使用大面积的模糊阴影 (shadow-lg/xl)**，最多使用 `shadow-sm`。
+
+### 3. 排版与字体层级 (Typography)
+- **拒绝巨大字号**：不需要营销网站那种夸张的大标题。最大字号控制在 `text-xl` 或 `text-2xl`。
+- **信息层级区分**：主要依靠**字重（Font Weight）**和**文本灰度（Color Contrast）**来区分，而不是盲目放大字号。
+  - 核心数据/标题：`font-medium text-zinc-900` (暗黑模式 `text-zinc-50`)
+  - 次要说明/表头/时间戳：`text-sm text-zinc-500`
+
+### 4. shadcn/ui 组件规范 (Component Specs)
+当调用或生成 shadcn 组件时，遵守以下默认配置：
+- **圆角 (Radius)**：保持克制，全局使用 `rounded-md` 或 `rounded-sm`，拒绝过度圆润。
+- **按钮 (Button)**：
+  - 默认使用较小的尺寸，如 `size="sm"`，以适应紧凑的 CRM 布局。
+  - 非核心主流程的操作（如：取消、刷新、更多），强制使用 `variant="outline"` 或 `variant="ghost"`。
+- **表格 (Table)**：
+  - 保持极高的紧凑度，减小单元格的 padding (如 `py-2`)。
+  - 表头文字使用：`text-xs font-medium text-zinc-500 uppercase tracking-wider`。
+- **标签 (Badge)**：用于标记学员状态，采用轮廓风格 `variant="outline"` 或柔和浅色背景（如流失用 `bg-red-50 text-red-700`，新增用 `bg-blue-50 text-blue-700`）。
+
+### 5. 布局 (Layout)
+- 采用经典的后台布局：左侧边栏（导航） + 顶部（面包屑与全局操作） + 核心内容区。
+- 内容区要充分利用屏幕宽度（高数据密度），不要使用过窄的 `max-w` 限制数据表格的展示。
