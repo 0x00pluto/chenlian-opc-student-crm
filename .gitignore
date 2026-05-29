@@ -76,6 +76,9 @@ dist/
 # --- pnpm ---
 .pnpm-store/
 
+# --- local sqlite ---
+/data/
+
 # --- 测试 / E2E 产物（后续若引入测试）---
 test-results/
 playwright-report/
