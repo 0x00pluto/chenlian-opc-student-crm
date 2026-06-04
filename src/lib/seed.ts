@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { randomUUID } from "crypto";
 
-import { getDb, getSqlite, initSchema } from "@/lib/db/index";
+import { getDb } from "@/lib/db/index";
 import {
   advisors,
   attendanceRecords,
@@ -44,32 +44,31 @@ function dateOnly(iso: string) {
   return iso.slice(0, 10);
 }
 
-export async function runSeed() {
-  initSchema();
-  const db = getDb();
-  const sqlite = getSqlite();
+async function clearSeedTables(db: ReturnType<typeof getDb>) {
+  await db.delete(chatMessages);
+  await db.delete(wecomBindings);
+  await db.delete(studentAiInsights);
+  await db.delete(followUpLogs);
+  await db.delete(interviewRecords);
+  await db.delete(attendanceRecords);
+  await db.delete(certificateIssues);
+  await db.delete(retrainingRecords);
+  await db.delete(importConflicts);
+  await db.delete(importBatches);
+  await db.delete(auditLogs);
+  await db.delete(enrollments);
+  await db.delete(students);
+  await db.delete(cohorts);
+  await db.delete(courseSeries);
+  await db.delete(courseCategories);
+  await db.delete(users);
+  await db.delete(advisors);
+  await db.delete(systemSettings);
+}
 
-  sqlite.exec(`
-    DELETE FROM chat_messages;
-    DELETE FROM wecom_bindings;
-    DELETE FROM student_ai_insights;
-    DELETE FROM follow_up_logs;
-    DELETE FROM interview_records;
-    DELETE FROM attendance_records;
-    DELETE FROM certificate_issues;
-    DELETE FROM retraining_records;
-    DELETE FROM import_conflicts;
-    DELETE FROM import_batches;
-    DELETE FROM audit_logs;
-    DELETE FROM enrollments;
-    DELETE FROM students;
-    DELETE FROM cohorts;
-    DELETE FROM course_series;
-    DELETE FROM course_categories;
-    DELETE FROM users;
-    DELETE FROM advisors;
-    DELETE FROM system_settings;
-  `);
+export async function runSeed() {
+  const db = getDb();
+  await clearSeedTables(db);
 
   const passwordHash = await bcrypt.hash("123456", 10);
   const now = new Date().toISOString();

@@ -1,3 +1,7 @@
+import { loadEnvFiles } from "../src/lib/load-env";
+
+loadEnvFiles();
+
 import { runSeed } from "../src/lib/seed";
 
 runSeed()
